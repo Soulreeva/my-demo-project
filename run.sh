@@ -29,15 +29,19 @@ cd "$(dirname "$0")"
 ROOT=$PWD
 CMD_ARG=${2:-essentials}
 
-cdtypes() {
+cd-types() {
   cd "${ROOT}/types"
 }
 
-cdapi() {
+cd-shared() {
+  cd "${ROOT}/shared"
+}
+
+cd-api() {
   cd "${ROOT}/backend"
 }
 
-cddemo() {
+cd-demo() {
   cd "${ROOT}/frontend"
 }
 
@@ -53,7 +57,7 @@ reset() {
 }
 
 #runMigrations() {
-#  cdapi
+#  cd-api
 #  announce "running migrations"
 #  npm run migration:run
 #  announce "running migrations finished"
@@ -63,11 +67,38 @@ install() {
   announce "installing"  
   yarn install
 
-  announce "building shared types"
+  announce "installing types"
   yarn run build:types
 
-  announce "building client shared library"
+  announce "installing shared"
   yarn run build:shared
+
+  announce "installing frontend"
+  cd-demo
+  npm i
+
+  announce "building shared"
+  cd-api
+  npm i
+}
+
+build() {
+  announce "building"  
+  yarn install
+
+  announce "building types"
+  yarn run build:types
+
+  announce "building shared"
+  yarn run build:shared
+
+  announce "building frontend"
+  cd-demo
+  npm run build
+
+  announce "building shared"
+  cd-api
+  npm run build
 }
 
 start() {
@@ -80,20 +111,20 @@ start() {
   #runMigrations
 
   announce "starting types"
-  cdtypes
+  cd-types
   yarn run start &
 
-  announce "starting client shared"
-  cdclient-shared
-  yarn run start &
+  announce "starting shared"
+  cd-shared
+  npm run start &
 
   announce "starting api"
-  cdapi
-  yarn run start:debug &
+  cd-api
+  npm run start:debug &
 
   announce "starting demo project"
   
-  cddemo
+  cd-demo
   yarn run start &
 
   wait
@@ -102,6 +133,9 @@ start() {
 case ${1} in
   "start")
     start
+    ;;
+  "build")
+    build
     ;;
   "reset")
     reset

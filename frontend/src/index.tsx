@@ -1,14 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import { App } from "./App";
-import "./index.css";
 
-const root = document.getElementById("root");
-if (root) {
-  const _root = ReactDOM.createRoot(root);
-  _root.render(
+// ApiClient.initialise();
+
+const root = createRoot(document.getElementById("root") as Element);
+root.render(
     <React.StrictMode>
-      <App />
+        <App />
     </React.StrictMode>
-  );
-}
+);
