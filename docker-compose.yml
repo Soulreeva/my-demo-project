@@ -1,18 +1,27 @@
 version: "3.8"
 
 services:
-  backend:
-    build:
-      context: ./backend
+  db:
+    image: mysql:8
     ports:
-      - "3001:3000"
+      - 4409:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
     environment:
-      - NODE_ENV=production
+      - MYSQL_ROOT_PASSWORD=docker
+      - MYSQL_DATABASE=docker
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
 
-  frontend:
-    build:
-      context: ./frontend
+  s3:
+    container_name: demo_s3
+    image: lphoward/fake-s3
+    stop_grace_period: 0s
     ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
+      - "4569:4569"
+    volumes:
+      - s3-data:/fakes3_root:delegated
+
+volumes:
+  mysql-data:
+  s3-data:
